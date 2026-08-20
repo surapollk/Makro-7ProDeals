@@ -2,6 +2,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductList from '../components/ProductList';
 import SearchBar from '../components/SearchBar';
+import AIChatbot from '../components/AIChatbot';
 import { fetchProductsAction, getCategories } from './actions';
 
 export async function generateMetadata({ searchParams }) {
@@ -88,6 +89,9 @@ export default async function Page({ searchParams }) {
       </main>
 
       <Footer categories={categories} />
+      
+      {/* Floating Chatbot */}
+      <AIChatbot currentProducts={initialProducts} categoryName={categoryName} />
     </div>
   );
 }
