@@ -43,7 +43,7 @@ export default async function Page({ searchParams }) {
   const activeGid = isGlobalSearch ? '' : (resolvedParams.gid || firstGid || '');
   
   // Fetch initial products server-side
-  const { products: initialProducts, hasMore: initialHasMore } = await fetchProductsAction(activeGid, 1, 50, searchQuery);
+  const { products: initialProducts, hasMore: initialHasMore, totalPages: initialTotalPages } = await fetchProductsAction(activeGid, 1, 50, searchQuery);
   
   let activeCategory = null;
   for (const c of categories) {
@@ -77,6 +77,7 @@ export default async function Page({ searchParams }) {
           <ProductList 
             initialProducts={initialProducts} 
             initialHasMore={initialHasMore} 
+            initialTotalPages={initialTotalPages || 1}
             gid={activeGid} 
             query={searchQuery}
           />

@@ -28,30 +28,34 @@ export async function fetchProductsAction(gid, page = 1, limit = 50, query = '')
       catName = categories.find(c => c.gid === String(gid))?.name || '';
     }
 
+    let countQueryText = 'SELECT COUNT(*) FROM makro_products WHERE 1=1';
     let queryText = 'SELECT * FROM makro_products WHERE 1=1';
     let queryParams = [];
     
     if (catName) {
       queryParams.push(catName);
+      countQueryText += ` AND category = $${queryParams.length}`;
       queryText += ` AND category = $${queryParams.length}`;
     }
     
     if (query) {
       queryParams.push(`%${query}%`);
+      countQueryText += ` AND (product_name ILIKE $${queryParams.length} OR category ILIKE $${queryParams.length})`;
       queryText += ` AND (product_name ILIKE $${queryParams.length} OR category ILIKE $${queryParams.length})`;
     }
     
+    // Get total count
+    const countRes = await pool.query(countQueryText, queryParams);
+    const totalCount = parseInt(countRes.rows[0].count, 10);
+    const totalPages = Math.ceil(totalCount / limit) || 1;
+
     const offset = (page - 1) * limit;
-    // Request limit + 1 to check if there are more pages
-    queryText += ` ORDER BY product_name LIMIT ${limit + 1} OFFSET ${offset}`;
+    queryText += ` ORDER BY product_name LIMIT ${limit} OFFSET ${offset}`;
 
     const res = await pool.query(queryText, queryParams);
-    
     const rows = res.rows;
-    const hasMore = rows.length > limit;
-    const productsToReturn = hasMore ? rows.slice(0, limit) : rows;
 
-    const products = productsToReturn.map(p => {
+    const products = rows.map(p => {
       const cleanPrice = (val) => {
         if (!val) return 0;
         const num = parseFloat(String(val).replace(/[^\d.-]/g, ''));
@@ -81,10 +85,12 @@ export async function fetchProductsAction(gid, page = 1, limit = 50, query = '')
 
     return {
       products,
-      hasMore
+      hasMore: page < totalPages,
+      totalPages,
+      totalCount
     };
   } catch (err) {
     console.error("Failed to fetch products from Supabase", err);
-    return { products: [], hasMore: false };
+    return { products: [], hasMore: false, totalPages: 1, totalCount: 0 };
   }
 }
