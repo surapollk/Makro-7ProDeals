@@ -347,7 +347,6 @@ footer {
   align-items: center;
   margin: 0 20px;
   flex: 1;
-  max-width: 600px;
 }
 
 .search-input-wrapper {
