@@ -1,0 +1,1 @@
+﻿const { Pool } = require('pg'); const pool = new Pool({ connectionString: 'postgresql://postgres.jtqkhsjuzsgrbhnvljps:.%40AUIIIii%232611963@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres' }); pool.query('SELECT * FROM makro_products LIMIT 10').then(res => { res.rows.forEach(r => console.log(r[\URL รูปภาพ\])); pool.end(); }).catch(console.error);
