@@ -1,6 +1,7 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductList from '../components/ProductList';
+import SearchBar from '../components/SearchBar';
 import { fetchProductsAction, getCategories } from './actions';
 
 export async function generateMetadata({ searchParams }) {
@@ -67,7 +68,9 @@ export default async function Page({ searchParams }) {
       <Header categories={categories} activeGid={activeGid} initialQuery={searchQuery} />
       
       <main className="main-container">
-        <h2 className="section-title">{categoryName}</h2>
+        <SearchBar initialQuery={searchQuery} />
+        
+        <h2 className="section-title" style={{ marginTop: '20px' }}>{categoryName}</h2>
         
         {initialProducts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#666', fontSize: '1.2rem' }}>
